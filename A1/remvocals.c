@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     for (size_t size; (size = fread(buffer, 1, BUFFER_SIZE, sourcewav));) {
         // For each pair of 16-bit ints, we subtract the second from the first and divide the result by 2, and then replace both with the result
         for (size_t i = 0; i + 1 < size / 2; i += 2) {
-            BUFFER_INT16[i] = BUFFER_INT16[i + 1] = (BUFFER_INT16[i] - BUFFER_INT16[i + 1]) / 2;
+            BUFFER_INT16[i] = BUFFER_INT16[i + 1] = ((int32_t)BUFFER_INT16[i] - (int32_t)BUFFER_INT16[i + 1]) / 2;
         }
 
         // Write the result to the file
