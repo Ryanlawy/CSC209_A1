@@ -9,33 +9,30 @@ SYNOPSIS
 
 DESCRIPTION (200 - 400 words)
 
-  The addecho() function takes an existing wav file and creates a new WAV file that has echo added to it. The result of the    echo affect is controlled by two parameters: delay and volume_scale. The delay argument -d, specified the amount of          samples   to wait before mixing-in the echoing copy of the sound with the original copy of the input WAV file . The           volume_scale argument -v specified the amount of volume needed to be scale down from the echoing copy of the original 
-  input WAV file. For example, a setting of 2 for volume_scale means to divide the volume of the original sound by 2 when 
-  producing the echo. 
-  Wav files are binary files. Sourcewav indicates the mono wav sound file that already exists, and destwav is the new mono 
-  output wav file to create that includes the echo. 	
+The addecho() function takes an existing wav file and creates a new WAV file that has echo added to it. The result of the echo affect is controlled by two parameters: delay and volume_scale. The delay argument -d, specified the amount of samples to wait before mixing-in the echoing copy of the sound with the original copy of the input WAV file. The volume_scale argument -v specified the amount of volume needed to be scale down from the echoing copy of the original input WAV file. For example, a setting of 2 for volume_scale means to divide the volume of the original sound by 2 when producing the echo. Wav files are binary files. Sourcewav indicates the mono wav sound file that already exists, and destwav is the new mono output wav file to create that includes the echo. 	
 
-  If an argument is missing:
-        If the first argument is not provided, the argument -d specified by delay will be set to the defaul value 8000. If           the second argument is not provided, the argument -v specified by volume_scale will be set to the default value of           4. 
+If an argument is missing:
+
+If the first argument is not provided, the argument -d specified by delay will be set to the defaul value 8000. If the second argument is not provided, the argument -v specified by volume_scale will be set to the default value of 4. 
 
 
-	-d,  delay
-          tells us how many samples to wait before mixing-in the echoing copy of the sound with the original copy of the               sound.
+-d,  delay
+          tells us how many samples to wait before mixing-in the echoing copy of the sound with the original copy of the sound.
 
-	-v,  volumescale
+-v,  volumescale
           The amount by which to scale down the volume of the echoing copy of the sound. For example, a setting of 2 for               volume_scale means to divide the volume of the original sound by 2 when producing the echo
 
-	sourcewav
+sourcewav
       stereo wav sound file that already exists
 
-	destwav
+destwav
       new stereo output wav file to be created that has echo
 
 
 RETURN VALUES
 	Upon successful return, the function returns:
 	0 - if successful,
-  1 - if minor problem (e.g., cannot access file),
+  	1 - if minor problem (e.g., cannot access file),
 	2 - if major problem (e.g., cannot access command -line.).
 
 
