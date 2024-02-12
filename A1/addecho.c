@@ -38,10 +38,12 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
     int bytes_read = fread(header, sizeof(unsigned char), 44, sourcewav);
     if(bytes_read != 44){
         fprintf(stderr, "fread fail at %s reading header\n", source_name);
+        exit(-1);
     }
     int bytes_read2 = fwrite(header, sizeof(unsigned char), 44, destwav);
     if(bytes_read2 != 44){
         fprintf(stderr, "fwrite fail at %s cpoying header\n", dest_name);
+        exit(-1);
     }
 
     int temp;
@@ -54,23 +56,34 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
     memset(echo_buffer, 0, delay * sizeof(int));
 
     int bytes = header[34] / 8; //also equals 2
+
+    //check if the file is atleast 44bytes
     int a =fseek(sourcewav, 0, SEEK_END);
     if(a!=0){
         fprintf(stderr, "fseek fail at %s end\n", source_name);
+        exit(-1);
+    }
+    int size = ftell(sourcewav);
+    if(size < 44){
+        fprintf(stderr,"empty file\n");
+        exit(-1);
     }
 
 
     a = fseek(sourcewav, 0, SEEK_END);
     if(a!=0){
         fprintf(stderr, "fseek fail at %s end\n", source_name);
+        exit(-1);
     }
     int b = fseek(sourcewav, 44, SEEK_SET);
     if(b!=0){
         fprintf(stderr, "fseek fail at %s seek set\n", source_name);
+        exit(-1);
     }
     int c = fseek(destwav, 44, SEEK_SET);
     if(c!=0){
         fprintf(stderr, "fseek fail at %s seek set\n", dest_name);
+        exit(-1);
     }
 
 
@@ -99,6 +112,7 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
             bytes_read=fwrite(&num, 2, 1, destwav); //write to dest
                 if(bytes_read!=1){
                 fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, num);
+                exit(-1);
                 }
             echoed++; // increment the amount added
 
@@ -112,6 +126,7 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
             bytes_read=fwrite(&temp, 2, 1, destwav); //write original to 
                 if(bytes_read!=1){
                 fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, temp);
+                exit(-1);
                 }
         }
 
@@ -129,6 +144,7 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
             bytes_read=fwrite(&zero, bytes, 1, destwav);
                 if(bytes_read!=1){
                 fprintf(stderr, "fwrite fail at %s adding zeros\n", dest_name);
+                exit(-1);
                 }
         }
     }
@@ -137,12 +153,14 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
         bytes_read=fwrite(&zero, bytes, 1, destwav);
         if(bytes_read!=1){
             fprintf(stderr, "fwrite fail at %s adding zeros\n", dest_name);
+            exit(-1);
         }
     }
 
     a = fseek(destwav, -delay*2, SEEK_CUR);
     if(a!=0){
     fprintf(stderr, "fseek fail at %s seek cur\n", dest_name);
+    exit(-1);
     }
 
         //remaining buffer
@@ -151,6 +169,7 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
         bytes_read=fwrite(&num, bytes, 1, destwav);
             if(bytes_read!=1){
             fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name,num);
+            exit(-1);
             }
     }
 
@@ -161,10 +180,12 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
     a=fseek(destwav, 40, SEEK_SET);
     if(a!=0){
     fprintf(stderr, "fseek fail at %s seek set\n", dest_name);
+    exit(-1);
     }
     bytes_read=fwrite(&data_chunk_size, sizeof(int), 1, destwav);
     if(bytes_read!=1){
     fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, data_chunk_size);
+    exit(-1);
     }
 
     // Update the file size in the header
@@ -172,10 +193,12 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
     a = fseek(destwav, 4, SEEK_SET);
     if(a!=0){
     fprintf(stderr, "fseek fail at %s seek set\n", dest_name);
+    exit(-1);
     }
     bytes_read=fwrite(&file_size, sizeof(int), 1, destwav);
     if(bytes_read!=1){
     fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, file_size);
+    exit(-1);
     }
 
     // free memory
@@ -207,7 +230,7 @@ int main(int argc, char **argv) {
                 volume_scale = strtol(optarg, NULL, 10);
                 break;
             default:
-                printf("underfined command");
+                printf("underfined command\n");
         }
 
      }
@@ -240,4 +263,3 @@ int main(int argc, char **argv) {
     
     return 0;
 }
-
