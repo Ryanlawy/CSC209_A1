@@ -32,8 +32,7 @@ destwav
 RETURN VALUES
 	Upon successful return, the function returns:
 	0 - if successful,
-  	1 - if minor problem (e.g., cannot access file),
-	2 - if major problem (e.g., cannot access command -line.).
+  	-1 - any error(e.g., cannot access file,  cannot access command -line.)
 
 
 EXAMPLES 
@@ -44,9 +43,13 @@ EXAMPLES
   2. Addes echo to door.wav with delay 12000 and volumescale of 2, creating door_12000_2.wav
   addecho   -d 12000   -v 2   door.wav   door_12000_2.wav. 
 
+  3. Uses the default values of delay and volume scale which are 8000 and 4 to remix door.wav and output to helo.wav
+  addecho  door.wav  helo.wav. 
+
+
 
 WARNINGS
 	File size: 
 		The Maximum size for a wav file is 4GiB
-
+	-large -d delays use a lot of space
 
