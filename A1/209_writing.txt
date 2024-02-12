@@ -1,5 +1,5 @@
 NAME 
-addecho - creates a new WAV file with echo from an existing WAV file. 
+	addecho - creates a new WAV file with echo from an existing WAV file. 
 
 
 SYNOPSIS
