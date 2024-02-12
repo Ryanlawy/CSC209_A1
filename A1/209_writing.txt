@@ -48,9 +48,6 @@ EXAMPLES
 WARNINGS
 	File size: 
 		The Maximum size for a wav file is 4GiB
-	Delay limit: 
-	Volumescale limit:
-
 
 BUGS 
 
