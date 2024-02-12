@@ -149,20 +149,6 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
         }
     }
     
-    for(int j = 0;j<delay;j++){ //increase file size for echo
-        bytes_read=fwrite(&zero, bytes, 1, destwav);
-        if(bytes_read!=1){
-            fprintf(stderr, "fwrite fail at %s adding zeros\n", dest_name);
-            exit(-1);
-        }
-    }
-
-    a = fseek(destwav, -delay*2, SEEK_CUR);
-    if(a!=0){
-    fprintf(stderr, "fseek fail at %s seek cur\n", dest_name);
-    exit(-1);
-    }
-
         //remaining buffer
     for (int i = echoed; i < read; i++) {
         int num = echo_buffer[i % delay];
