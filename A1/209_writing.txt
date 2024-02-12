@@ -1,55 +1,60 @@
 NAME 
-
-  addecho - create a new WAV file with echo from an existing WAV file. 
+addecho - creates a new WAV file with echo from an existing WAV file. 
 
 
 SYNOPSIS
-	adecho [-d delay] [-v volume_scale] sourcewav destwavd
+	addecho [-d delay] [-v volume_scale] sourcewav destwav
 
 
-DESCRIPTION (200 - 400 words)
+DESCRIPTION
 
-The addecho() function takes an existing wav file and creates a new WAV file that has echo added to it. The result of the echo affect is controlled by two parameters: delay and volume_scale. The delay argument -d, specified the amount of samples to wait before mixing-in the echoing copy of the sound with the original copy of the input WAV file. The volume_scale argument -v specified the amount of volume needed to be scale down from the echoing copy of the original input WAV file. For example, a setting of 2 for volume_scale means to divide the volume of the original sound by 2 when producing the echo. Wav files are binary files. Sourcewav indicates the mono wav sound file that already exists, and destwav is the new mono output wav file to create that includes the echo. 	
-
+addecho takes an existing wav file and creates a new WAV file that has echo added to it. The result of the echo effect is controlled by two parameters: delay and volume_scale. The delay argument -d, specified the amount of samples to wait before mixing-in the echoing copy of the sound with the original copy of the input WAV file . The volume_scale argument -v specified the amount of volume needed to be scale down from the echoing copy of the original input WAV file. For example, a setting of 2 for volume_scale means to divide the volume of the original sound by 2 when producing the echo. 
+Wav files are binary files. Sourcewav indicates the mono wav sound file that already exists, and destwav is the new mono output wav file to create that includes the echo. 
+	
 If an argument is missing:
-
 If the first argument is not provided, the argument -d specified by delay will be set to the defaul value 8000. If the second argument is not provided, the argument -v specified by volume_scale will be set to the default value of 4. 
 
 
--d,  delay
-          tells us how many samples to wait before mixing-in the echoing copy of the sound with the original copy of the sound.
+	-d,  delay
+	tells us how many samples to wait before mixing-in the echoing copy of the sound with the original copy of the sound. d is a positive int.
 
--v,  volumescale
-          The amount by which to scale down the volume of the echoing copy of the sound. For example, a setting of 2 for               volume_scale means to divide the volume of the original sound by 2 when producing the echo
+	-v,  volumescale
+	The amount by which to scale down the volume of the echoing copy of the sound. For example, a setting of 2 for volume_scale means to divide the volume 	of the original sound by 2 when producing the echo. v is a positive int.
 
-sourcewav
-      stereo wav sound file that already exists
+	sourcewav
+	stereo wav sound file that already exists
 
-destwav
-      new stereo output wav file to be created that has echo
+	destwav
+	new stereo output wav file to be created that has echo
 
 
 RETURN VALUES
+
 	Upon successful return, the function returns:
 	0 - if successful,
-  	-1 - any error(e.g., cannot access file,  cannot access command -line.)
 
-
+-1 - any error(e.g., cannot access file,  cannot access command -line.)
+	
 EXAMPLES 
-  1. Addes echo to door.wav with delay 12000 and volumescale of 4, creating door_12000_4.wav.
-  addecho   -d 12000   -v 4   door.wav  door_12000_4.wav
+
+	addecho   -d 12000   -v 4   door.wav  door_12000_4.wav
+
+	Addes echo to door.wav with delay 12000 and volumescale of 4, creating door_12000_4.wav.
 
 
-  2. Addes echo to door.wav with delay 12000 and volumescale of 2, creating door_12000_2.wav
-  addecho   -d 12000   -v 2   door.wav   door_12000_2.wav. 
+	addecho   -d 12000   -v 2   door.wav   door_12000_2.wav. 
 
-  3. Uses the default values of delay and volume scale which are 8000 and 4 to remix door.wav and output to helo.wav
-  addecho  door.wav  helo.wav. 
+	Addes echo to door.wav with delay 12000 and volumescale of 2, creating door_12000_2.wav
 
+
+	addecho  door.wav  helo.wav. 
+
+	Uses the default values of delay and volume scale which are 8000 and 4 to remix door.wav and output to helo.wav
 
 
 WARNINGS
-	File size: 
-		The Maximum size for a wav file is 4GiB
-	-large -d delays use a lot of space
+	The Maximum size for a wav file is 4GiB
 
+	-large -d delays use a lot of space
+BUGS
+	No bugs
