@@ -35,25 +35,44 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
     }
 
     //copy the header
-    fread(header, sizeof(unsigned char), 44, sourcewav);
-    fwrite(header, sizeof(unsigned char), 44, destwav);
+    int bytes_read = fread(header, sizeof(unsigned char), 44, sourcewav);
+    if(bytes_read != 44){
+        fprintf(stderr, "fread fail at %s reading header\n", source_name);
+    }
+    int bytes_read2 = fwrite(header, sizeof(unsigned char), 44, destwav);
+    if(bytes_read2 != 44){
+        fprintf(stderr, "fwrite fail at %s cpoying header\n", dest_name);
+    }
 
     int temp;
 
     int *echo_buffer = (int *)malloc(delay * sizeof(int));
     if(echo_buffer == NULL){
-        printf("malloc failed\n");
+        printf("echo buffer malloc failed, delay is %d\n",delay);
         exit(-1);
     }
     memset(echo_buffer, 0, delay * sizeof(int));
 
     int bytes = header[34] / 8; //also equals 2
-    fseek(sourcewav, 0, SEEK_END);
+    int a =fseek(sourcewav, 0, SEEK_END);
+    if(a!=0){
+        fprintf(stderr, "fseek fail at %s end\n", source_name);
+    }
 
 
-    fseek(sourcewav, 0, SEEK_END);
-    fseek(sourcewav, 44, SEEK_SET);
-    fseek(destwav, 44, SEEK_SET);
+    a = fseek(sourcewav, 0, SEEK_END);
+    if(a!=0){
+        fprintf(stderr, "fseek fail at %s end\n", source_name);
+    }
+    int b = fseek(sourcewav, 44, SEEK_SET);
+    if(b!=0){
+        fprintf(stderr, "fseek fail at %s seek set\n", source_name);
+    }
+    int c = fseek(destwav, 44, SEEK_SET);
+    if(c!=0){
+        fprintf(stderr, "fseek fail at %s seek set\n", dest_name);
+    }
+
 
     int read = 0;
 
@@ -77,7 +96,10 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
                 num = -32768;
             }
             //echo_buffer[read % delay] = echo;
-            fwrite(&num, 2, 1, destwav); //write to dest
+            bytes_read=fwrite(&num, 2, 1, destwav); //write to dest
+                if(bytes_read!=1){
+                fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, num);
+                }
             echoed++; // increment the amount added
 
             // we also need to add the new echo in echo buffer
@@ -87,7 +109,10 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
         //if haven't reached delay
         if(read<delay){
             echo_buffer[echo_index] = echo; //add to echo buffer
-            fwrite(&temp, 2, 1, destwav); //write original to 
+            bytes_read=fwrite(&temp, 2, 1, destwav); //write original to 
+                if(bytes_read!=1){
+                fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, temp);
+                }
         }
 
         // Increment total samples written
@@ -101,33 +126,57 @@ void addecho(char *source_name, char *dest_name, int delay, int volume_scale){
     
     if (x > 0){
         for(int j = 0;j<x;j++){
-            fwrite(&zero, bytes, 1, destwav);
+            bytes_read=fwrite(&zero, bytes, 1, destwav);
+                if(bytes_read!=1){
+                fprintf(stderr, "fwrite fail at %s adding zeros\n", dest_name);
+                }
         }
     }
     
     for(int j = 0;j<delay;j++){ //increase file size for echo
-        fwrite(&zero, bytes, 1, destwav);
+        bytes_read=fwrite(&zero, bytes, 1, destwav);
+        if(bytes_read!=1){
+            fprintf(stderr, "fwrite fail at %s adding zeros\n", dest_name);
+        }
     }
 
-    fseek(destwav, -delay*2, SEEK_CUR);
+    a = fseek(destwav, -delay*2, SEEK_CUR);
+    if(a!=0){
+    fprintf(stderr, "fseek fail at %s seek cur\n", dest_name);
+    }
 
         //remaining buffer
     for (int i = echoed; i < read; i++) {
         int num = echo_buffer[i % delay];
-        fwrite(&num, bytes, 1, destwav);
+        bytes_read=fwrite(&num, bytes, 1, destwav);
+            if(bytes_read!=1){
+            fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name,num);
+            }
     }
 
     //update header
     int data_chunk_size = (ftell(destwav) - 44); 
 
     // Update the data chunk size in the header
-    fseek(destwav, 40, SEEK_SET);
-    fwrite(&data_chunk_size, sizeof(int), 1, destwav);
+    a=fseek(destwav, 40, SEEK_SET);
+    if(a!=0){
+    fprintf(stderr, "fseek fail at %s seek set\n", dest_name);
+    }
+    bytes_read=fwrite(&data_chunk_size, sizeof(int), 1, destwav);
+    if(bytes_read!=1){
+    fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, data_chunk_size);
+    }
 
     // Update the file size in the header
     int file_size = data_chunk_size + 36; // 36 bytes for the headers
-    fseek(destwav, 4, SEEK_SET);
-    fwrite(&file_size, sizeof(int), 1, destwav);
+    a = fseek(destwav, 4, SEEK_SET);
+    if(a!=0){
+    fprintf(stderr, "fseek fail at %s seek set\n", dest_name);
+    }
+    bytes_read=fwrite(&file_size, sizeof(int), 1, destwav);
+    if(bytes_read!=1){
+    fprintf(stderr, "fwrite fail at %s writing %d\n", dest_name, file_size);
+    }
 
     // free memory
     free(echo_buffer);
@@ -163,19 +212,26 @@ int main(int argc, char **argv) {
 
      }
 
+    //check number of args
+    if (optind +2 != argc)
+    {
+        fprintf(stderr,"wrong format\n");
+        exit(-1);
+    }
+    
 
     //todo implement error check
     source_name = argv[optind];
     dest_name = argv[optind+1];
 
-    if (delay == 0)
+    if (delay == 0 || delay < 0)
     {
-    fprintf(stderr, "delay should not be 0\n");
+    fprintf(stderr, "delay should not be 0 or negative\n");
     exit(-1);
     }
-    if (volume_scale == 0)
+    if (volume_scale == 0 || volume_scale < 0)
     {
-    fprintf(stderr, "volume scale should not be 0\n");
+    fprintf(stderr, "volume scale should not be 0 or negative\n");
     exit(-1);
     }
     
